@@ -18,7 +18,14 @@ from django.contrib import admin
 from django.urls import path
 from perpus_app.views import *
 
+
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', beranda, name='beranda')
+    path('', beranda, name='beranda'),
+    path('master_buku/', getMasterbuku, name='master_buku'),
+    path('master_buku/tambah', formTambahbuku, name='tambah_buku'),
+    path('master_buku/delete/<int:id>/', delete_buku, name='delete_buku'),
+    path('master_sumber_buku/', getMastersumberbuku, name='master_sumber_buku'),
+    path('master_sumber_buku/tambah', formTambahsumberbuku, name='tambah_sumber_buku'),
+    
 ]
