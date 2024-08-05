@@ -1,3 +1,4 @@
+
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse
 from django.template import loader
@@ -85,7 +86,7 @@ def getMastersumberbuku(request):
     
     return render(request, template, context)
 
-def delete_buku(request, id):
+def deleteBuku(request, id):
     buku = get_object_or_404(MasterBuku, id=id)
     buku.is_deleted = True
     buku.save()
