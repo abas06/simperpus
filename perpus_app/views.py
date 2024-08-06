@@ -91,3 +91,16 @@ def deleteBuku(request, id):
     buku.is_deleted = True
     buku.save()
     return redirect('master_buku')
+
+def formEditBuku(request, id):
+    buku = get_object_or_404(MasterBuku, id=id)
+    list_sumber = MasterSumberBuku.objects.filter(is_deleted=False).values_list('id_sumber', 'sumber')
+    
+    if request.method == 'POST':
+        form = MasterBukuForm(request.POST, instance=buku)
+        if form.is_valid():
+            form.save()
+            return redirect('master_buku')  # Ubah ke URL tujuan Anda
+    else:
+        form = MasterBukuForm(instance=buku)
+    return render(request, 'edit_buku.html', {'form': form, 'list_sumber': list_sumber, 'buku': buku})

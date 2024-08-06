@@ -37,11 +37,8 @@
                   <td class="harga">{{ buku.4 }}</td>
                   <td class="harga">{{ buku.5 }}</td>
                   <td>
-                    {% comment %} <form action="{% url 'delete_buku' buku.0 %}" method="post">
-                      {% csrf_token %} {% endcomment %}
-                      <button type="button" class="btn btn-warning btn-sm">Update</button>
-                  </form>
-                </td>
+                    <a href="{% url 'edit_buku' buku.0 %}" class="btn btn-warning btn-sm">Edit</a>
+                  </td>
                   <td>
                     <form action="{% url 'delete_buku' buku.0 %}" method="post">
                         {% csrf_token %}
