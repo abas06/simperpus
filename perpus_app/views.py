@@ -59,24 +59,45 @@ def formTambahsumberbuku(request):
 
 def getMasterbuku(request):
     conn, cursor = dbconnection()
-    query = """ SELECT a.id, a.nama_buku, a.penulis, b.sumber, a.harga_beli, a.harga_jual
+
+    search_query = request.GET.get('q', '')
+    source_query = request.GET.get('source', '')
+    filter_query = ""
+
+    if search_query:
+        filter_query += f" AND a.nama_buku ILIKE '%%{search_query}%%'"
+    if source_query:
+        filter_query += f" AND a.sumber_buku_id = {source_query}"
+
+    query = f"""
+        SELECT a.id, a.nama_buku, a.penulis, b.sumber, a.harga_beli, a.harga_jual
         FROM master_buku a
         LEFT JOIN master_sumber_buku b ON b.id_sumber = a.sumber_buku_id
-        WHERE a.is_deleted = 'false'
+        WHERE a.is_deleted = 'false' {filter_query}
         ORDER BY a.id DESC
     """
     cursor.execute(query)
     list_buku = cursor.fetchall()
+
+    # Get sources for dropdown
+    cursor.execute("SELECT id_sumber, sumber FROM master_sumber_buku")
+    sumber_buku_list = cursor.fetchall()
+
     cursor.close()
     conn.close()
+
     paginator = Paginator(list_buku, 10)  # 10 data per halaman
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
+
     template = 'master_buku.html'
     context = {
-                'list_buku': list_buku,
-                'page_obj': page_obj
-                }
+        'list_buku': list_buku,
+        'page_obj': page_obj,
+        'search_query': search_query,
+        'source_query': source_query,
+        'sumber_buku_list': sumber_buku_list,
+    }
     return render(request, template, context)
 
 def getMastersumberbuku(request):
