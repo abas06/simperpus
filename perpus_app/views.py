@@ -11,7 +11,6 @@ from .models import *
 # Koneksi ke database
 
 def dbconnection():
-    # Membuat koneksi ke database
     conn = psycopg2.connect(
         dbname=settings.DATABASES['default']['NAME'],
         user=settings.DATABASES['default']['USER'],
@@ -19,44 +18,14 @@ def dbconnection():
         host=settings.DATABASES['default']['HOST'],
         port=settings.DATABASES['default']['PORT']
     )
-    
-    # Membuat cursor untuk eksekusi query
     cursor = conn.cursor()
-    
     return conn, cursor
 
-# Create your views here.
+# Beranda
 def beranda(request):
     return render (request, 'index.html')
 
-def formTambahbuku(request):
-    
-    list_sumber = MasterSumberBuku.objects.filter(is_deleted=False).values_list('id_sumber', 'sumber')
-    
-    if request.method == 'POST':
-        form = MasterBukuForm(request.POST)
-        if form.is_valid():
-            form.save()
-            return redirect('master_buku')  # Ubah ke URL tujuan Anda
-        # else:
-        #     print(form.errors)  # Cetak error form jika tidak valid
-    else:
-        form = MasterBukuForm()
-    return render(request, 'tambah_buku.html', {'form': form, 'list_sumber': list_sumber})
-
-def formTambahsumberbuku(request):
-    if request.method == 'POST':
-        form = MasterSumberBukuForm(request.POST)
-        if form.is_valid():
-            form.save()
-            return redirect('master_sumber_buku')  # Ubah ke URL tujuan Anda
-        # else:
-        #     print(form.errors)  # Cetak error form jika tidak valid
-    else:
-        form = MasterBukuForm()
-    return render(request, 'tambah_sumber_buku.html', {'form': form})
-
-
+# Master Buku
 def getMasterbuku(request):
     conn, cursor = dbconnection()
 
@@ -79,7 +48,6 @@ def getMasterbuku(request):
     cursor.execute(query)
     list_buku = cursor.fetchall()
 
-    # Get sources for dropdown
     cursor.execute("SELECT id_sumber, sumber FROM master_sumber_buku")
     sumber_buku_list = cursor.fetchall()
 
@@ -100,18 +68,18 @@ def getMasterbuku(request):
     }
     return render(request, template, context)
 
-def getMastersumberbuku(request):
-    conn, cursor = dbconnection()
-    query = """ SELECT * FROM master_sumber_buku WHERE is_deleted = 'false'
-    """
-    cursor.execute(query)
-    list_sumber_buku = cursor.fetchall()
-    cursor.close()
-    conn.close()
-    template = 'master_sumber_buku.html'
-    context = {'list_sumber_buku': list_sumber_buku}
+def formTambahbuku(request):
     
-    return render(request, template, context)
+    list_sumber = MasterSumberBuku.objects.filter(is_deleted=False).values_list('id_sumber', 'sumber')
+    
+    if request.method == 'POST':
+        form = MasterBukuForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('master_buku')
+    else:
+        form = MasterBukuForm()
+    return render(request, 'tambah_buku.html', {'form': form, 'list_sumber': list_sumber})
 
 def deleteBuku(request, id):
     buku = get_object_or_404(MasterBuku, id=id)
@@ -127,7 +95,30 @@ def formEditBuku(request, id):
         form = MasterBukuForm(request.POST, instance=buku)
         if form.is_valid():
             form.save()
-            return redirect('master_buku')  # Ubah ke URL tujuan Anda
+            return redirect('master_buku')
     else:
         form = MasterBukuForm(instance=buku)
     return render(request, 'edit_buku.html', {'form': form, 'list_sumber': list_sumber, 'buku': buku})
+
+# Master Sumber Buku
+def formTambahsumberbuku(request):
+    if request.method == 'POST':
+        form = MasterSumberBukuForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('master_sumber_buku')
+    else:
+        form = MasterBukuForm()
+    return render(request, 'tambah_sumber_buku.html', {'form': form})
+
+def getMastersumberbuku(request):
+    conn, cursor = dbconnection()
+    query = """ SELECT * FROM master_sumber_buku WHERE is_deleted = 'false'
+    """
+    cursor.execute(query)
+    list_sumber_buku = cursor.fetchall()
+    cursor.close()
+    conn.close()
+    template = 'master_sumber_buku.html'
+    context = {'list_sumber_buku': list_sumber_buku}
+    return render(request, template, context)
