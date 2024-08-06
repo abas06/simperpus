@@ -1,5 +1,6 @@
 
 from django.shortcuts import render, redirect, get_object_or_404
+from django.core.paginator import Paginator
 from django.http import HttpResponse
 from django.template import loader
 import psycopg2
@@ -68,9 +69,14 @@ def getMasterbuku(request):
     list_buku = cursor.fetchall()
     cursor.close()
     conn.close()
+    paginator = Paginator(list_buku, 10)  # 10 data per halaman
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
     template = 'master_buku.html'
-    context = {'list_buku': list_buku}
-    
+    context = {
+                'list_buku': list_buku,
+                'page_obj': page_obj
+                }
     return render(request, template, context)
 
 def getMastersumberbuku(request):

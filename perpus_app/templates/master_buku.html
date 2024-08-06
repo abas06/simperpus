@@ -14,6 +14,7 @@
       <br/>
       <div class="d-flex justify-content-center" style="min-height: 100vh;"> 
         <div class="col-md-12 ">
+          <a class="btn btn-success btn-sm" href="{% url 'tambah_buku' %}" role="button">Tambah Buku</a>
           <table class="table table-striped table-hover ">
             <thead>
               <tr>
@@ -28,7 +29,7 @@
               </tr>
             </thead>
             <tbody>
-              {% for buku in list_buku %}
+              {% for buku in page_obj %}
                 <tr>
                   <td>{{ forloop.counter }}</td>
                   <td>{{ buku.1 }}</td>
@@ -37,7 +38,7 @@
                   <td class="harga">{{ buku.4 }}</td>
                   <td class="harga">{{ buku.5 }}</td>
                   <td>
-                    <a href="{% url 'edit_buku' buku.0 %}" class="btn btn-warning btn-sm">Edit</a>
+                      <a href="{% url 'edit_buku' buku.0 %}" class="btn btn-warning btn-sm">Edit</a>
                   </td>
                   <td>
                     <form action="{% url 'delete_buku' buku.0 %}" method="post">
@@ -49,8 +50,42 @@
               {% endfor %}
             </tbody>
           </table>
-          <a class="btn btn-success btn-sm" href="{% url 'tambah_buku' %}" role="button">Tambah Buku</a>
-          <br/><br/><br/>
+          <nav aria-label="Page navigation">
+            <ul class="pagination justify-content-end">
+              {% if page_obj.has_previous %}
+                <li class="page-item">
+                  <a class="page-link" href="?page={{ page_obj.previous_page_number }}">Previous</a>
+                </li>
+              {% else %}
+                <li class="page-item disabled">
+                  <a class="page-link">Previous</a>
+                </li>
+              {% endif %}
+  
+              {% for num in page_obj.paginator.page_range %}
+                {% if page_obj.number == num %}
+                  <li class="page-item active">
+                    <a class="page-link">{{ num }}</a>
+                  </li>
+                {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                  <li class="page-item">
+                    <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                  </li>
+                {% endif %}
+              {% endfor %}
+  
+              {% if page_obj.has_next %}
+                <li class="page-item">
+                  <a class="page-link" href="?page={{ page_obj.next_page_number }}">Next</a>
+                </li>
+              {% else %}
+                <li class="page-item disabled">
+                  <a class="page-link">Next</a>
+                </li>
+              {% endif %}
+            </ul>
+          </nav>
+          <br/>
           {% include 'footer.html' %}
         </div>
       </div>
