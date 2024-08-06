@@ -1,3 +1,4 @@
+{%load static%}
 <!doctype html>
 <html lang="en">
   <head>
@@ -14,7 +15,7 @@
       <div class="d-flex justify-content-center" style="min-height: 100vh;">
         <div class="col-md-12">
           <div class="d-flex justify-content-between">
-            <a class="btn btn-success btn-sm" href="{% url 'tambah_buku' %}" role="button">Tambah Buku</a>
+            <a class="btn btn-success btn-md" href="{% url 'tambah_buku' %}" role="button">Tambah Buku</a>
             <form class="d-flex" method="get" action="">
               <input class="form-control me-2" type="search" placeholder="Cari nama buku" name="q" value="{{ search_query }}">
               <select class="form-select me-2" name="source">
@@ -103,28 +104,6 @@
       </div>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
-    <script>
-      // Fungsi untuk memformat angka
-      function formatHarga(harga) {
-          return parseFloat(harga).toLocaleString('id-ID', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-      }
-      // Seleksi semua elemen dengan class 'harga'
-      document.querySelectorAll('.harga').forEach(function(element) {
-          element.textContent = formatHarga(element.textContent);
-      });
-    </script>
-    <script>
-      function confirmDelete(event) {
-          event.preventDefault(); // Prevent form submission
-          var confirmation = confirm("Yakin akan dihapus?");
-          if (confirmation) {
-              // If user clicks "Yes", submit the form
-              event.target.closest('form').submit();
-          } else {
-              // If user clicks "No", do nothing
-              return false;
-          }
-      }
-  </script>
+    <script src="{% static 'js/functions.js' %}"></script>
   </body>
 </html>

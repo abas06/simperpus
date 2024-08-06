@@ -48,7 +48,7 @@ def getMasterbuku(request):
     cursor.execute(query)
     list_buku = cursor.fetchall()
 
-    cursor.execute("SELECT id_sumber, sumber FROM master_sumber_buku")
+    cursor.execute("SELECT id_sumber, sumber FROM master_sumber_buku WHERE is_deleted = 'false'")
     sumber_buku_list = cursor.fetchall()
 
     cursor.close()
