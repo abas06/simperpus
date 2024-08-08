@@ -122,3 +122,22 @@ def getMastersumberbuku(request):
     template = 'master_sumber_buku.html'
     context = {'list_sumber_buku': list_sumber_buku}
     return render(request, template, context)
+
+def deleteSumberbuku(request, id):
+    buku = get_object_or_404(MasterSumberBuku, id_sumber=id)
+    buku.is_deleted = True
+    buku.save()
+    return redirect('master_sumber_buku')
+
+def editSumberbuku(request, id_sumber):
+    sumber_buku = get_object_or_404(MasterSumberBuku, id_sumber=id_sumber)
+    
+    if request.method == 'POST':
+        form = MasterSumberBukuForm(request.POST, instance=sumber_buku)
+        if form.is_valid():
+            form.save()
+            return redirect('master_sumber_buku')
+    else:
+        form = MasterSumberBukuForm(instance=sumber_buku)
+    
+    return render(request, 'edit_sumber_buku.html', {'form': form, 'sumber_buku': sumber_buku})

@@ -26,9 +26,9 @@ urlpatterns = [
     path('master_buku/tambah', formTambahbuku, name='tambah_buku'),
     path('master_buku/delete/<int:id>/', deleteBuku, name='delete_buku'),
     path('master_buku/edit/<int:id>/', formEditBuku, name='edit_buku'),
+    # Sumber Buku
     path('master_sumber_buku/', getMastersumberbuku, name='master_sumber_buku'),
     path('master_sumber_buku/tambah', formTambahsumberbuku, name='tambah_sumber_buku'),
-    # path('delete-buku/<int:id>/', deleteBuku, name='delete_buku'),
-
-    
+    path('master_sumber_buku/delete/<int:id>/', deleteSumberbuku, name='delete_sumber_buku'),
+    path('master_sumber_buku/edit/<int:id_sumber>/', editSumberbuku, name='edit_sumber_buku'),
 ]

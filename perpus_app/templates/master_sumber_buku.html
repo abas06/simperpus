@@ -19,6 +19,9 @@
               <tr>
                 <th scope="col">No.</th>
                 <th scope="col">Nama Sumber</th>
+                <th scope="col">Delete</th>
+                <th scope="col">Delete</th>
+                {% comment %} <th scope="col">Update</th> {% endcomment %}
               </tr>
             </thead>
             <tbody>
@@ -26,6 +29,15 @@
                 <tr>
                   <td>{{ forloop.counter }}</td>
                   <td>{{ sumber.1 }}</td>
+                  <td>
+                    <a href="{% url 'edit_sumber_buku' sumber.0 %}" class="btn btn-warning btn-sm">Edit</a>
+                  </td>
+                  <td>
+                    <form action="{% url 'delete_sumber_buku' sumber.0 %}" method="post">
+                        {% csrf_token %}
+                        <button type="submit" onclick="return confirmDelete(event)" class="btn btn-danger btn-sm">Delete</button>
+                    </form>
+                  </td>
                 </tr>
               {% endfor %}
             </tbody>
@@ -37,5 +49,6 @@
       </div>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <script src="{% static 'js/functions.js' %}"></script>
   </body>
 </html>
