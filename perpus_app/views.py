@@ -1,4 +1,3 @@
-
 from django.shortcuts import render, redirect, get_object_or_404
 from django.core.paginator import Paginator
 from django.http import HttpResponse
@@ -112,15 +111,33 @@ def formTambahsumberbuku(request):
     return render(request, 'tambah_sumber_buku.html', {'form': form})
 
 def getMastersumberbuku(request):
+    search_query = request.GET.get('q', '')
+    filter_query = ""
+
+    if search_query:
+        filter_query += f" AND sumber ILIKE '%%{search_query}%%'"
+
     conn, cursor = dbconnection()
-    query = """ SELECT * FROM master_sumber_buku WHERE is_deleted = 'false'
+    query = f"""
+        SELECT * FROM master_sumber_buku
+        WHERE is_deleted = 'false'
+        {filter_query}
     """
     cursor.execute(query)
     list_sumber_buku = cursor.fetchall()
     cursor.close()
     conn.close()
+
+    paginator = Paginator(list_sumber_buku, 10)  # 10 data per halaman
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
     template = 'master_sumber_buku.html'
-    context = {'list_sumber_buku': list_sumber_buku}
+    context = {
+        'list_sumber_buku': page_obj.object_list,  # Hanya data untuk halaman saat ini
+        'page_obj': page_obj,
+        'search_query': search_query
+    }
     return render(request, template, context)
 
 def deleteSumberbuku(request, id):
