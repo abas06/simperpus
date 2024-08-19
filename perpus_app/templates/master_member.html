@@ -1,0 +1,106 @@
+{%load static%}
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Master Data Buku</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+  </head>
+  <body>
+    <div class="container-fluid">
+      {% include 'menu.html' %}<br/>
+      <h3 class="text-center">Master Data Buku</h3>
+      <br/>
+      <div class="d-flex justify-content-center" style="min-height: 100vh;">
+        <div class="col-md-12">
+          <div class="d-flex justify-content-between">
+            {% comment %} <a class="btn btn-success btn-md" href="{% url 'tambah_buku' %}" role="button">Tambah Buku</a> {% endcomment %}
+            <form class="d-flex" method="get" action="">
+              <input class="form-control me-2" type="search" placeholder="Cari Member" name="q" value="{{ search_query }}">
+              {% comment %} <select class="form-select me-2" name="source">
+                <option value="" >Semua Sumber</option>
+                {% for sumber in sumber_buku_list %}
+                  <option value="{{ sumber.0 }}" {% if source_query == sumber.0 %}selected{% endif %}>{{ sumber.1 }}</option>
+                {% endfor %} {% endcomment %}
+              </select>
+              <button class="btn btn-outline-success" type="submit">Cari</button>
+            </form>
+          </div>
+          <br/>
+          <table class="table table-striped table-hover">
+            <thead>
+              <tr>
+                <th scope="col">No.</th>
+                <th scope="col">No. Member</th>
+                <th scope="col">Nama</th>
+                <th scope="col">Alamat Domisili</th>
+                <th scope="col">Status Member</th>
+                <th scope="col">Delete</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for member in page_obj %}
+                <tr>
+                  <td>{{ forloop.counter }}</td>
+                  <td>{{ member.1 }}</td>
+                  <td>{{ member.4 }}</td>
+                  <td>{{ member.6 }}</td>
+                  <td>{{ member.7 }}</td>
+                  {% comment %} <td>
+                      <a href="{% url 'edit_buku' buku.0 %}" class="btn btn-warning btn-sm">Edit</a>
+                  </td>{% endcomment %}
+                  <td>
+                    <form action="{% url 'delete_member' member.0 %}" method="post">
+                        {% csrf_token %}
+                        <button type="submit" onclick="return confirmDelete(event)" class="btn btn-danger btn-sm">Delete</button>
+                    </form>
+                  </td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+          <nav aria-label="Page navigation">
+            <ul class="pagination justify-content-end">
+              {% if page_obj.has_previous %}
+                <li class="page-item">
+                  <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if search_query %}&q={{ search_query }}{% endif %}">Previous</a>
+                </li>
+              {% else %}
+                <li class="page-item disabled">
+                  <a class="page-link">Previous</a>
+                </li>
+              {% endif %}
+  
+              {% for num in page_obj.paginator.page_range %}
+                {% if page_obj.number == num %}
+                  <li class="page-item active">
+                    <a class="page-link">{{ num }}</a>
+                  </li>
+                {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                  <li class="page-item">
+                    <a class="page-link" href="?page={{ num }}{% if search_query %}&q={{ search_query }}{% endif %}">{{ num }}</a>
+                  </li>
+                {% endif %}
+              {% endfor %}
+  
+              {% if page_obj.has_next %}
+                <li class="page-item">
+                  <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if search_query %}&q={{ search_query }}{% endif %}">Next</a>
+                </li>
+              {% else %}
+                <li class="page-item disabled">
+                  <a class="page-link">Next</a>
+                </li>
+              {% endif %}
+            </ul>
+          </nav>
+          <br/>
+          {% include 'footer.html' %}
+        </div>
+      </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <script src="{% static 'js/functions.js' %}"></script>
+  </body>
+</html>

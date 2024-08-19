@@ -22,6 +22,7 @@ from perpus_app.views import *
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', beranda, name='beranda'),
+    # Master Buku
     path('master_buku/', getMasterbuku, name='master_buku'),
     path('master_buku/tambah', formTambahbuku, name='tambah_buku'),
     path('master_buku/delete/<int:id>/', deleteBuku, name='delete_buku'),
@@ -31,4 +32,7 @@ urlpatterns = [
     path('master_sumber_buku/tambah', formTambahsumberbuku, name='tambah_sumber_buku'),
     path('master_sumber_buku/delete/<int:id>/', deleteSumberbuku, name='delete_sumber_buku'),
     path('master_sumber_buku/edit/<int:id_sumber>/', editSumberbuku, name='edit_sumber_buku'),
+    # Master Member
+    path('master_member/', getMastermember, name='master_member'),
+    path('master_member/delete/<int:id>/', deleteMember, name='delete_member'),
 ]

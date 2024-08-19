@@ -158,3 +158,43 @@ def editSumberbuku(request, id_sumber):
         form = MasterSumberBukuForm(instance=sumber_buku)
     
     return render(request, 'edit_sumber_buku.html', {'form': form, 'sumber_buku': sumber_buku})
+
+# Master Buku
+
+def getMastermember(request):
+    conn, cursor = dbconnection()
+
+    search_query = request.GET.get('q', '')
+    filter_query = ""
+
+    if search_query:
+        filter_query += f" AND nama ILIKE '%%{search_query}%%'"
+
+    query = f"""
+        select * from master_member
+        WHERE is_deleted = 'false' {filter_query}
+        ORDER BY id DESC
+    """
+    cursor.execute(query)
+    list_member = cursor.fetchall()
+
+    cursor.close()
+    conn.close()
+
+    paginator = Paginator(list_member, 10)  # 10 data per halaman
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    template = 'master_member.html'
+    context = {
+        'list_member': list_member,
+        'page_obj': page_obj,
+        'search_query': search_query,
+    }
+    return render(request, template, context)
+
+def deleteMember(request, id):
+    member = get_object_or_404(MasterMember, id=id)
+    member.is_deleted = True
+    member.save()
+    return redirect('master_member')

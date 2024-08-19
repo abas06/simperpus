@@ -135,7 +135,21 @@ class MasterBuku(models.Model):
     class Meta:
         managed = False  # Ubah menjadi True jika Anda ingin Django mengelola tabel
         db_table = 'master_buku'
+        
+class MasterMember(models.Model):
+    id = models.BigAutoField(primary_key=True)
+    no_member = models.CharField(max_length=256, blank=True, null=True)
+    jenis_identitas = models.SmallIntegerField(blank=True, null=True)
+    no_identitas = models.CharField(max_length=256, blank=True, null=True)
+    nama = models.CharField(max_length=256, blank=True, null=True)
+    alamat_ktp = models.CharField(max_length=256, blank=True, null=True)
+    domisili = models.CharField(max_length=256, blank=True, null=True)
+    status_aktif = models.BooleanField(blank=True, null=True)
+    is_deleted = models.BooleanField(default=False, blank=True, null=True)
 
+    class Meta:
+        managed = False
+        db_table = 'master_member'
 
 class MasterSumberBuku(models.Model):
     id_sumber = models.BigAutoField(primary_key=True)
