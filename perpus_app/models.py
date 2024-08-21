@@ -155,22 +155,20 @@ class MasterSumberBuku(models.Model):
     id_sumber = models.BigAutoField(primary_key=True)
     sumber = models.CharField(max_length=256, blank=True, null=True)
     is_deleted = models.BooleanField(default=False, blank=True, null=True)
-
+    
     class Meta:
         managed = False  # Ubah menjadi True jika Anda ingin Django mengelola tabel
-        db_table = 'master_sumber_buku'
+    db_table = 'master_sumber_buku'
+    
+class TransaksiKunjungan(models.Model):
+    id = models.BigAutoField(primary_key=True)
+    member_id = models.ForeignKey(MasterMember, models.DO_NOTHING, db_column='member_id', blank=True, null=True)
+    jenis_tansaksi = models.SmallIntegerField(blank=True, null=True)
+    tgl_transaksi = models.DateTimeField(blank=True, null=True)
+    is_deleted = models.BooleanField(default=False, blank=True, null=True)
+    no_transaksi = models.CharField(max_length=256, blank=True, null=True)
 
+    class Meta:
+        managed = False
+        db_table = 'transaksi_kunjungan'
 
-
-# # class PerpusAppMasterbuku(models.Model):
-# #     id = models.BigAutoField(primary_key=True)
-# #     nama_buku = models.CharField(max_length=100)
-# #     penulis = models.CharField(max_length=100)
-# #     sumber_buku = models.CharField(max_length=100)
-# #     harga_beli = models.DecimalField(max_digits=10, decimal_places=2)
-# #     harga_jual = models.DecimalField(max_digits=10, decimal_places=2)
-# #     is_deleted = models.BooleanField()
-
-#     class Meta:
-#         managed = False
-#         db_table = 'perpus_app_masterbuku'

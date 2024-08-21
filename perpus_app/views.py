@@ -6,9 +6,10 @@ import psycopg2
 from django.conf import settings
 from .forms import *
 from .models import *
+from django.db.models import Max
+from django.utils import timezone
 
 # Koneksi ke database
-
 def dbconnection():
     conn = psycopg2.connect(
         dbname=settings.DATABASES['default']['NAME'],
@@ -160,7 +161,6 @@ def editSumberbuku(request, id_sumber):
     return render(request, 'edit_sumber_buku.html', {'form': form, 'sumber_buku': sumber_buku})
 
 # Master Buku
-
 def getMastermember(request):
     conn, cursor = dbconnection()
 
@@ -198,3 +198,64 @@ def deleteMember(request, id):
     member.is_deleted = True
     member.save()
     return redirect('master_member')
+
+# Generator
+def generate_no_member():
+    last_member = MasterMember.objects.all().order_by('id').last()
+    if not last_member:
+        return 'MBR0001'
+    
+    last_no_member = last_member.no_member
+    new_no = int(last_no_member[3:]) + 1
+    new_no_member = f'MBR{new_no:04d}'
+    return new_no_member
+
+def generate_no_transaksi():
+    today = timezone.now().strftime('%y%m%d')
+    last_transaksi = TransaksiKunjungan.objects.filter(
+        tgl_transaksi__date=timezone.now().date()
+    ).order_by('id').last()
+    
+    if not last_transaksi:
+        return f'TR{today}0001'
+    
+    last_no_transaksi = last_transaksi.no_transaksi
+    last_sequence = int(last_no_transaksi[8:])
+    new_sequence = last_sequence + 1
+    new_no_transaksi = f'TR{today}{new_sequence:04d}'
+    return new_no_transaksi
+
+# Reg new member
+def regNewmember(request):
+    if request.method == 'POST':
+        member_form = MasterMemberForm(request.POST)
+        transaksi_form = TransaksiKunjunganForm(request.POST)
+        
+        if member_form.is_valid() and transaksi_form.is_valid():
+            new_no_member = generate_no_member()
+            # Simpan data member baru
+            new_member = member_form.save(commit=False)
+            new_member.no_member = new_no_member
+            new_member.status_aktif = True  # Atur status_aktif ke True
+            new_member.save()
+            
+            # Simpan data transaksi kunjungan dengan referensi ke member yang baru dibuat
+            new_no_transaksi = generate_no_transaksi()
+            new_transaksi = transaksi_form.save(commit=False)
+            new_transaksi.member_id = new_member
+            new_transaksi.no_transaksi = new_no_transaksi
+            new_transaksi.tgl_transaksi = timezone.now()
+            new_transaksi.save()
+            
+            return redirect('reg_new_member')
+        
+    else:
+        member_form = MasterMemberForm()
+        transaksi_form = TransaksiKunjunganForm()
+        
+    context = {
+        'member_form': member_form,
+        'transaksi_form': transaksi_form,
+    }
+    template = 'reg_new_member.html'
+    return render(request, template, context)

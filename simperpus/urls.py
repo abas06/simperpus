@@ -35,4 +35,6 @@ urlpatterns = [
     # Master Member
     path('master_member/', getMastermember, name='master_member'),
     path('master_member/delete/<int:id>/', deleteMember, name='delete_member'),
+    # Transaksi Peminjaman
+    path('reg_new_member', regNewmember, name='reg_new_member'),
 ]

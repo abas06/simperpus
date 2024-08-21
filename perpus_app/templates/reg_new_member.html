@@ -1,0 +1,78 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Bootstrap demo</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+  </head>
+  <body>
+    {% include 'menu.html' %}
+    <div class="container-fluid justify-content-center align-items-center" style="min-height: 100vh;">
+        <br/><br/>
+      {% comment %} {% include 'sidebar.html' %} {% endcomment %}
+      <div class="row">
+		<div class="col-md-6">
+      <form method="post">
+        {% csrf_token %}
+        <div class="form-group row">
+            <label for="{{ member_form.nama.id_for_label }}" class="col-3 col-form-label">Nama Member</label>
+            <div class="col-9">
+                <input id="{{ member_form.nama.id_for_label }}" name="{{ member_form.nama.html_name }}" placeholder="Nama Member" type="text" required="required" class="form-control" value="">
+            </div>
+        </div><br/>
+        <div class="form-group row">
+            <label for="{{ member_form.jenis_identitas.id_for_label }}" class="col-3 col-form-label">Jenis Identitas</label>
+            <div class="col-9">
+                <select id="{{ member_form.jenis_identitas.id_for_label }}" name="{{ member_form.jenis_identitas.html_name }}" class="form-select" required="required">
+                    <option value="1">KTP / Paspor</option>
+                    <option value="2">Kartu Siswa / Mahasiswa</option>
+                    <option value="3">SIM</option>
+                    <option value="4">Lainnya</option>
+                </select>
+            </div>
+        </div><br/>
+        <div class="form-group row">
+            <label for="{{ member_form.no_identitas.id_for_label }}" class="col-3 col-form-label">No. Identitas</label>
+            <div class="col-9">
+                <input id="{{ member_form.no_identitas.id_for_label }}" name="{{ member_form.no_identitas.html_name }}" placeholder="No. Identitas" type="text" class="form-control" required="required" value="">
+            </div>
+        </div><br/>
+        <div class="form-group row">
+            <label for="{{ member_form.alamat_ktp.id_for_label }}" class="col-3 col-form-label">Alamat Identitas</label>
+            <div class="col-9">
+                <input id="{{ member_form.alamat_ktp.id_for_label }}" name="{{ member_form.alamat_ktp.html_name }}" placeholder="Alamat Identitas" type="text" class="form-control" required="required" value="">
+            </div>
+        </div><br/>
+        <div class="form-group row">
+            <label for="{{ member_form.domisili.id_for_label }}" class="col-3 col-form-label">Domisili</label>
+            <div class="col-9">
+                <input id="{{ member_form.domisili.id_for_label }}" name="{{ member_form.domisili.html_name }}" placeholder="Domisili" type="text" class="form-control" required="required" value="">
+            </div>
+        </div><br/>
+        <div class="form-group row">
+            <label for="{{ transaksi_form.jenis_tansaksi.id_for_label }}" class="col-3 col-form-label">Jenis Transaksi</label>
+            <div class="col-9">
+                <select id="{{ transaksi_form.jenis_tansaksi.id_for_label }}" name="{{ transaksi_form.jenis_tansaksi.html_name }}" class="form-select" required="required">
+                    <option value="1">Peminjaman</option>
+                    <option value="2">Pembelian</option>
+                    <option value="3">Kunjungan</option>
+                </select>
+            </div>
+        </div><br/>
+        <div class="form-group row">
+            <div class="offset-3 col-9">
+                <button name="submit" type="submit" class="btn btn-primary">Pilih Buku</button>
+            </div>
+        </div><br/>
+      </form>
+		</div>
+		<div class="col-md-6">
+		</div>
+	</div>
+      {% include 'footer.html' %}
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+  </body>
+</html>
