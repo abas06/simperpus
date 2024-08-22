@@ -17,15 +17,16 @@
       <form method="post">
         {% csrf_token %}
         <div class="form-group row">
-            <label for="{{ member_form.nama.id_for_label }}" class="col-3 col-form-label">Nama Member</label>
+            <label for="{{ member_form.nama.nama }}" class="col-3 col-form-label">Nama Member</label>
             <div class="col-9">
-                <input id="{{ member_form.nama.id_for_label }}" name="{{ member_form.nama.html_name }}" placeholder="Nama Member" type="text" required="required" class="form-control" value="">
+                <input id="{{ member_form.nama.nama }}" name="{{ member_form.nama.html_name }}" placeholder="Nama Member" type="text" required="required" class="form-control" value="">
             </div>
         </div><br/>
         <div class="form-group row">
-            <label for="{{ member_form.jenis_identitas.id_for_label }}" class="col-3 col-form-label">Jenis Identitas</label>
+            <label for="{{ member_form.jenis_identitas.id_for_field }}" class="col-3 col-form-label">Jenis Identitas</label>
             <div class="col-9">
-                <select id="{{ member_form.jenis_identitas.id_for_label }}" name="{{ member_form.jenis_identitas.html_name }}" class="form-select" required="required">
+                <select id="{{ member_form.jenis_identitas.id_for_field }}" name="{{ member_form.jenis_identitas.html_name }}" class="form-select" required="required">
+                    <option value="">-- Pilih --</option>
                     <option value="1">KTP / Paspor</option>
                     <option value="2">Kartu Siswa / Mahasiswa</option>
                     <option value="3">SIM</option>
@@ -34,27 +35,28 @@
             </div>
         </div><br/>
         <div class="form-group row">
-            <label for="{{ member_form.no_identitas.id_for_label }}" class="col-3 col-form-label">No. Identitas</label>
+            <label for="{{ member_form.no_identitas.id_for_field }}" class="col-3 col-form-label">No. Identitas</label>
             <div class="col-9">
-                <input id="{{ member_form.no_identitas.id_for_label }}" name="{{ member_form.no_identitas.html_name }}" placeholder="No. Identitas" type="text" class="form-control" required="required" value="">
+                <input id="{{ member_form.no_identitas.id_for_field }}" name="{{ member_form.no_identitas.html_name }}" placeholder="No. Identitas" type="text" class="form-control" required="required" value="">
             </div>
         </div><br/>
         <div class="form-group row">
-            <label for="{{ member_form.alamat_ktp.id_for_label }}" class="col-3 col-form-label">Alamat Identitas</label>
+            <label for="{{ member_form.alamat_ktp.id_for_field }}" class="col-3 col-form-label">Alamat Identitas</label>
             <div class="col-9">
-                <input id="{{ member_form.alamat_ktp.id_for_label }}" name="{{ member_form.alamat_ktp.html_name }}" placeholder="Alamat Identitas" type="text" class="form-control" required="required" value="">
+                <input id="{{ member_form.alamat_ktp.id_for_field }}" name="{{ member_form.alamat_ktp.html_name }}" placeholder="Alamat Identitas" type="text" class="form-control" required="required" value="">
             </div>
         </div><br/>
         <div class="form-group row">
-            <label for="{{ member_form.domisili.id_for_label }}" class="col-3 col-form-label">Domisili</label>
+            <label for="{{ member_form.domisili.id_for_field }}" class="col-3 col-form-label">Domisili</label>
             <div class="col-9">
-                <input id="{{ member_form.domisili.id_for_label }}" name="{{ member_form.domisili.html_name }}" placeholder="Domisili" type="text" class="form-control" required="required" value="">
+                <input id="{{ member_form.domisili.id_for_field }}" name="{{ member_form.domisili.html_name }}" placeholder="Domisili" type="text" class="form-control" required="required" value="">
             </div>
         </div><br/>
         <div class="form-group row">
-            <label for="{{ transaksi_form.jenis_tansaksi.id_for_label }}" class="col-3 col-form-label">Jenis Transaksi</label>
+            <label for="{{ transaksi_form.jenis_tansaksi.id_for_field }}" class="col-3 col-form-label">Jenis Transaksi</label>
             <div class="col-9">
-                <select id="{{ transaksi_form.jenis_tansaksi.id_for_label }}" name="{{ transaksi_form.jenis_tansaksi.html_name }}" class="form-select" required="required">
+                <select id="{{ transaksi_form.jenis_tansaksi.id_for_field }}" name="{{ transaksi_form.jenis_tansaksi.html_name }}" class="form-select" required="required">
+                    <option value="">-- Pilih --</option>
                     <option value="1">Peminjaman</option>
                     <option value="2">Pembelian</option>
                     <option value="3">Kunjungan</option>
@@ -69,6 +71,25 @@
       </form>
 		</div>
 		<div class="col-md-6">
+            <table class="table table-striped table-hover">
+                <thead>
+                  <tr>
+                    <th scope="col">No.</th>
+                    <th scope="col">No Register</th>
+                    <th scope="col">Nama</th>
+                    <th scope="col">Jenis Kunjungan</th>
+                    <th scope="col">Tujuan Kunjungan</th>
+                  </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                      <td>1</td>
+                      <td>TR2408210001</td>
+                      <td>Abdul Basit</td>
+                      <td>Kunjungan Baru</td>
+                      <td>Kunjungan</td>
+                </tbody>
+              </table>
 		</div>
 	</div>
       {% include 'footer.html' %}

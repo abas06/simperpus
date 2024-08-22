@@ -158,7 +158,7 @@ class MasterSumberBuku(models.Model):
     
     class Meta:
         managed = False  # Ubah menjadi True jika Anda ingin Django mengelola tabel
-    db_table = 'master_sumber_buku'
+        db_table = 'master_sumber_buku'
     
 class TransaksiKunjungan(models.Model):
     id = models.BigAutoField(primary_key=True)
