@@ -227,6 +227,7 @@ def generate_no_transaksi():
 
 # Reg new member
 def regNewmember(request):
+    conn, cursor = dbconnection()
     if request.method == 'POST':
         member_form = MasterMemberForm(request.POST)
         transaksi_form = TransaksiKunjunganForm(request.POST)
@@ -245,6 +246,7 @@ def regNewmember(request):
             new_transaksi.member_id = new_member
             new_transaksi.no_transaksi = new_no_transaksi
             new_transaksi.tgl_transaksi = timezone.now()
+            new_transaksi.jenis_kunjungan = 1
             new_transaksi.save()
             
             return redirect('reg_new_member')
@@ -252,10 +254,44 @@ def regNewmember(request):
     else:
         member_form = MasterMemberForm()
         transaksi_form = TransaksiKunjunganForm()
+    
+    search_query = request.GET.get('q', '')
+    filter_query = ""
+    
+    if search_query:
+        filter_query += f" AND b.nama ILIKE '%%{search_query}%%'"
+        
+    query = f"""
+        SELECT a.id, a.no_transaksi, b.nama, 
+        CASE 
+            WHEN a.jenis_kunjungan = 1 THEN 'Kunjungan Baru'
+            WHEN a.jenis_kunjungan = 2 THEN 'Kunjungan Lama'
+        END AS jenis_kunjungan,
+        CASE 
+            WHEN a.jenis_transaksi = 1 THEN 'Peminjaman'
+            WHEN a.jenis_transaksi = 2 THEN 'Pembelian'
+            WHEN a.jenis_transaksi = 3 THEN 'Kunjungan'
+        END AS jenis_transaksi
+        FROM transaksi_kunjungan a
+        LEFT JOIN master_member b ON b.id = a.member_id
+        WHERE a.is_deleted = 'false' AND DATE(a.tgl_transaksi) = current_date
+        {filter_query} order by a.id desc
+    """
+    cursor.execute(query)
+    list_transaksi = cursor.fetchall()
+    cursor.close()
+    conn.close()
+    
+    paginator = Paginator(list_transaksi, 7)  # 10 data per halaman (disarankan lebih dari 1)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
         
     context = {
         'member_form': member_form,
         'transaksi_form': transaksi_form,
+        'page_obj': page_obj,
+        'search_query': search_query,
+        'list_transaksi': list_transaksi,
     }
     template = 'reg_new_member.html'
     return render(request, template, context)

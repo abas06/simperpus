@@ -14,7 +14,7 @@ class MasterSumberBukuForm(forms.ModelForm):
 class TransaksiKunjunganForm(forms.ModelForm):
     class Meta:
         model = TransaksiKunjungan
-        fields = ['member_id', 'jenis_tansaksi']
+        fields = ['member_id', 'jenis_transaksi']
         
 class MasterMemberForm(forms.ModelForm):
     class Meta:

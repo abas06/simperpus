@@ -163,10 +163,11 @@ class MasterSumberBuku(models.Model):
 class TransaksiKunjungan(models.Model):
     id = models.BigAutoField(primary_key=True)
     member_id = models.ForeignKey(MasterMember, models.DO_NOTHING, db_column='member_id', blank=True, null=True)
-    jenis_tansaksi = models.SmallIntegerField(blank=True, null=True)
+    jenis_transaksi = models.SmallIntegerField(blank=True, null=True)
     tgl_transaksi = models.DateTimeField(blank=True, null=True)
     is_deleted = models.BooleanField(default=False, blank=True, null=True)
     no_transaksi = models.CharField(max_length=256, blank=True, null=True)
+    jenis_kunjungan = models.SmallIntegerField(blank=True, null=True)
 
     class Meta:
         managed = False
