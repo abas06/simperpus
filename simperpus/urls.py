@@ -37,4 +37,6 @@ urlpatterns = [
     path('master_member/delete/<int:id>/', deleteMember, name='delete_member'),
     # Transaksi Peminjaman
     path('reg_new_member', regNewmember, name='reg_new_member'),
+    path('reg_old_member', regOldmember, name='reg_old_member'),
+    path('autocomplete-members/', autocomplete_members, name='autocomplete-members'),
 ]

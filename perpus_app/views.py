@@ -8,6 +8,8 @@ from .forms import *
 from .models import *
 from django.db.models import Max
 from django.utils import timezone
+from datetime import datetime, timedelta
+from django.http import JsonResponse
 
 # Koneksi ke database
 def dbconnection():
@@ -211,18 +213,18 @@ def generate_no_member():
     return new_no_member
 
 def generate_no_transaksi():
-    today = timezone.now().strftime('%y%m%d')
+    today = timezone.now().strftime('%y%m%d')  
     last_transaksi = TransaksiKunjungan.objects.filter(
-        tgl_transaksi__date=timezone.now().date()
+        tgl_transaksi__date=timezone.now().date() 
     ).order_by('id').last()
-    
+
     if not last_transaksi:
         return f'TR{today}0001'
-    
+
     last_no_transaksi = last_transaksi.no_transaksi
     last_sequence = int(last_no_transaksi[8:])
-    new_sequence = last_sequence + 1
-    new_no_transaksi = f'TR{today}{new_sequence:04d}'
+    new_sequence = last_sequence + 1 
+    new_no_transaksi = f'TR{today}{new_sequence:04d}' 
     return new_no_transaksi
 
 # Reg new member
@@ -233,6 +235,8 @@ def regNewmember(request):
         transaksi_form = TransaksiKunjunganForm(request.POST)
         
         if member_form.is_valid() and transaksi_form.is_valid():
+            local_time = timezone.localtime(timezone.now()) + timedelta(hours=7)
+            formatted_time = local_time.strftime('%Y-%m-%d %H:%M:%S')
             new_no_member = generate_no_member()
             # Simpan data member baru
             new_member = member_form.save(commit=False)
@@ -240,12 +244,11 @@ def regNewmember(request):
             new_member.status_aktif = True  # Atur status_aktif ke True
             new_member.save()
             
-            # Simpan data transaksi kunjungan dengan referensi ke member yang baru dibuat
             new_no_transaksi = generate_no_transaksi()
             new_transaksi = transaksi_form.save(commit=False)
             new_transaksi.member_id = new_member
             new_transaksi.no_transaksi = new_no_transaksi
-            new_transaksi.tgl_transaksi = timezone.now()
+            new_transaksi.tgl_transaksi = formatted_time
             new_transaksi.jenis_kunjungan = 1
             new_transaksi.save()
             
@@ -294,4 +297,71 @@ def regNewmember(request):
         'list_transaksi': list_transaksi,
     }
     template = 'reg_new_member.html'
+    return render(request, template, context)
+
+def autocomplete_members(request):
+    if 'term' in request.GET:
+        # Ambil saran berdasarkan nama atau nomor member yang cocok dengan input
+        qs = MasterMember.objects.filter(nama__icontains=request.GET.get('term'), is_deleted=False)
+        members = list(qs.values('id', 'no_member', 'nama'))
+        return JsonResponse(members, safe=False)
+    return JsonResponse([], safe=False)
+
+def regOldmember(request):
+    list_member = MasterMember.objects.filter(is_deleted=False).values_list('id', 'no_member', 'nama')
+    conn, cursor = dbconnection()
+    if request.method == 'POST':
+        transaksi_form = TransaksiKunjunganForm(request.POST)
+        if transaksi_form.is_valid():
+            local_time = timezone.localtime(timezone.now()) + timedelta(hours=7)
+            formatted_time = local_time.strftime('%Y-%m-%d %H:%M:%S')
+            new_no_transaksi = generate_no_transaksi()
+            new_transaksi = transaksi_form.save(commit=False)
+            new_transaksi.no_transaksi = new_no_transaksi
+            new_transaksi.tgl_transaksi = formatted_time
+            new_transaksi.jenis_kunjungan = 2
+            transaksi_form.save()
+            return redirect('reg_old_member')
+    else:
+        transaksi_form = TransaksiKunjunganForm()
+
+    search_query = request.GET.get('q', '')
+    filter_query = ""
+
+    if search_query:
+        filter_query += f" AND b.nama ILIKE '%%{search_query}%%'"
+
+    query = f"""
+        SELECT a.id, a.no_transaksi, b.nama, 
+        CASE 
+            WHEN a.jenis_kunjungan = 1 THEN 'Kunjungan Baru'
+            WHEN a.jenis_kunjungan = 2 THEN 'Kunjungan Lama'
+        END AS jenis_kunjungan,
+        CASE 
+            WHEN a.jenis_transaksi = 1 THEN 'Peminjaman'
+            WHEN a.jenis_transaksi = 2 THEN 'Pembelian'
+            WHEN a.jenis_transaksi = 3 THEN 'Kunjungan'
+        END AS jenis_transaksi
+        FROM transaksi_kunjungan a
+        LEFT JOIN master_member b ON b.id = a.member_id
+        WHERE a.is_deleted = 'false' AND DATE(a.tgl_transaksi) = current_date
+        {filter_query} order by a.id desc
+    """
+    cursor.execute(query)
+    list_transaksi = cursor.fetchall()
+    cursor.close()
+    conn.close()
+
+    paginator = Paginator(list_transaksi, 7)  # 10 data per halaman (disarankan lebih dari 1)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    context = {
+        'transaksi_form': transaksi_form,
+        'list_member': list_member,
+        'page_obj': page_obj,
+        'search_query': search_query,
+        'list_transaksi': list_transaksi
+    }
+    template = 'reg_old_member.html'
     return render(request, template, context)

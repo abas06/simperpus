@@ -1,25 +1,27 @@
 {% load static %}
 <div class="d-flex justify-content-center" style="min-height: 60vh;">
   <div class="row justify-content-start w-200">
-      <div class="col-md-6">
-        <div class="card" style="width: 18rem;">
-          <img src="{% static 'img/perpus2.jpg' %}" class="card-img-top" alt="..." style="width: 286px; height: 200px; object-fit: cover;">
+    <div class="col-md-6">
+      <div class="card" style="width: 18rem;">
+        <img src="{% static 'img/perpus2.jpg' %}" class="card-img-top" alt="..." style="width: 286px; height: 200px; object-fit: cover;">
           <div class="card-body">
             <h5 class="card-title">Member Baru</h5>
             <p class="card-text">Registrasi peminjaman atau pembelian untuk member baru</p>
             <a href="{% url 'reg_new_member' %}" class="btn btn-primary">Buka</a>
           </div>
         </div>
-      </div>
+      </div><br/>
       <div class="col-md-6">
         <div class="card" style="width: 18rem;">
           <img src="{% static 'img/perpus3.jpg' %}" class="card-img-top" alt="..." style="width: 286px; height: 200px; object-fit: cover;">
-          <div class="card-body">
-            <h5 class="card-title">Member Lama</h5>
-            <p class="card-text">Registrasi peminjaman atau pembelian untuk member lama</p>
-            <a href="#" class="btn btn-primary">Buka</a>
+            <div class="card-body">
+              <h5 class="card-title">Member Lama</h5>
+              <p class="card-text">Registrasi peminjaman atau pembelian untuk member lama</p>
+              <a href="{% url 'reg_old_member' %}" class="btn btn-primary">Buka</a>
+            </div>
           </div>
         </div>
       </div>
+    </div>
   </div>
 </div>
