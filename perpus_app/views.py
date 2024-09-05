@@ -303,7 +303,7 @@ def autocomplete_members(request):
     if 'term' in request.GET:
         # Ambil saran berdasarkan nama atau nomor member yang cocok dengan input
         qs = MasterMember.objects.filter(nama__icontains=request.GET.get('term'), is_deleted=False)
-        members = list(qs.values('id', 'no_member', 'nama'))
+        members = list(qs.values('id', 'no_member', 'nama', 'domisili', 'no_identitas', 'alamat_ktp'))
         return JsonResponse(members, safe=False)
     return JsonResponse([], safe=False)
 
