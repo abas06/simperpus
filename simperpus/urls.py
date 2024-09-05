@@ -39,4 +39,5 @@ urlpatterns = [
     path('reg_new_member', regNewmember, name='reg_new_member'),
     path('reg_old_member', regOldmember, name='reg_old_member'),
     path('autocomplete-members/', autocomplete_members, name='autocomplete-members'),
+    path('reg_new_member/delete/<int:id>/', deleteTransaksi, name='delete_transaksi'),
 ]

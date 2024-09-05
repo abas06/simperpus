@@ -21,6 +21,12 @@
                             <td>{{ transaksi.2 }}</td>
                             <td>{{ transaksi.3 }}</td>
                             <td>{{ transaksi.4 }}</td>
+                            <td>
+                                <form action="{% url 'delete_transaksi' transaksi.0 %}" method="post">
+                                    {% csrf_token %}
+                                    <button type="submit" onclick="return confirmDelete(event)" class="btn btn-danger btn-sm">Batal</button>
+                                </form>
+                              </td>
                         </tr>
                     {% endfor %}
                 </tbody>
@@ -59,3 +65,4 @@
                 </ul>
             </nav>
         </div>
+        

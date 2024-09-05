@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.core.paginator import Paginator
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
 from django.template import loader
 import psycopg2
 from django.conf import settings
@@ -365,3 +365,9 @@ def regOldmember(request):
     }
     template = 'reg_old_member.html'
     return render(request, template, context)
+
+def deleteTransaksi(request, id):
+    list_transaksi = get_object_or_404(TransaksiKunjungan, id=id)
+    list_transaksi.is_deleted = True
+    list_transaksi.save()
+    return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
