@@ -41,7 +41,7 @@ def getMasterbuku(request):
         filter_query += f" AND a.sumber_buku_id = {source_query}"
 
     query = f"""
-        SELECT a.id, a.nama_buku, a.penulis, b.sumber, a.harga_beli, a.harga_jual
+        SELECT a.id, a.nama_buku, a.penulis, b.sumber, a.harga_beli, a.harga_jual, a.harga_sewa
         FROM master_buku a
         LEFT JOIN master_sumber_buku b ON b.id_sumber = a.sumber_buku_id
         WHERE a.is_deleted = 'false' {filter_query}

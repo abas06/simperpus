@@ -4,7 +4,7 @@ from .models import *
 class MasterBukuForm(forms.ModelForm):
     class Meta:
         model = MasterBuku
-        fields = ['nama_buku', 'penulis', 'sumber_buku', 'harga_beli', 'harga_jual']
+        fields = ['nama_buku', 'penulis', 'sumber_buku', 'harga_beli', 'harga_jual', 'harga_sewa']
         
 class MasterSumberBukuForm(forms.ModelForm):
     class Meta:

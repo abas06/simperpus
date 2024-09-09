@@ -131,6 +131,7 @@ class MasterBuku(models.Model):
     harga_beli = models.FloatField(blank=True, null=True)
     harga_jual = models.FloatField(blank=True, null=True)
     is_deleted = models.BooleanField(default=False, blank=True, null=True)
+    harga_sewa = models.FloatField(blank=True, null=True)
 
     class Meta:
         managed = False  # Ubah menjadi True jika Anda ingin Django mengelola tabel
