@@ -239,7 +239,7 @@ def generate_no_billing():
     last_no_billing = last_billing.no_billing
     last_sequence = int(last_no_billing[8:])
     new_sequence = last_sequence + 1 
-    new_no_billing = f'TR{today}{new_sequence:04d}' 
+    new_no_billing = f'BIL{today}{new_sequence:04d}' 
     return new_no_billing
 
 # Reg new member
