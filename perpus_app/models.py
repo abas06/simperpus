@@ -174,3 +174,27 @@ class TransaksiKunjungan(models.Model):
         managed = False
         db_table = 'transaksi_kunjungan'
 
+class BillingKasir(models.Model):
+    id = models.BigAutoField(primary_key=True)
+    kunjungan_id = models.ForeignKey(TransaksiKunjungan, models.DO_NOTHING, db_column='kunjungan_id', blank=True, null=True)
+    no_billing = models.CharField(max_length=256, blank=True, null=True)
+    total_billing = models.FloatField(blank=True, null=True)
+    tgl_transaksi = models.DateTimeField(blank=True, null=True)
+    is_deleted = models.BooleanField(default=False, blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'billing_kasir'
+
+
+class BillingKasirDetail(models.Model):
+    id = models.BigAutoField(primary_key=True)
+    billing_id = models.IntegerField(models.DO_NOTHING, blank=True, null=True)
+    buku_id = models.IntegerField(blank=True, null=True)
+    jenis_transaksi = models.IntegerField(blank=True, null=True)
+    is_deleted = models.BooleanField(default=False, blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'billing_kasir_detail'
+        

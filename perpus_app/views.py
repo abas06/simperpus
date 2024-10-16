@@ -227,12 +227,28 @@ def generate_no_transaksi():
     new_no_transaksi = f'TR{today}{new_sequence:04d}' 
     return new_no_transaksi
 
+def generate_no_billing():
+    today = timezone.now().strftime('%y%m%d')  
+    last_billing = BillingKasir.objects.filter(
+        tgl_transaksi__date=timezone.now().date() 
+    ).order_by('id').last()
+
+    if not last_billing:
+        return f'{today}0001'
+
+    last_no_billing = last_billing.no_billing
+    last_sequence = int(last_no_billing[8:])
+    new_sequence = last_sequence + 1 
+    new_no_billing = f'TR{today}{new_sequence:04d}' 
+    return new_no_billing
+
 # Reg new member
 def regNewmember(request):
     conn, cursor = dbconnection()
     if request.method == 'POST':
         member_form = MasterMemberForm(request.POST)
         transaksi_form = TransaksiKunjunganForm(request.POST)
+        billing_form = BillingKasirForm(request.POST)
         
         if member_form.is_valid() and transaksi_form.is_valid():
             local_time = timezone.localtime(timezone.now()) + timedelta(hours=7)
@@ -241,9 +257,9 @@ def regNewmember(request):
             # Simpan data member baru
             new_member = member_form.save(commit=False)
             new_member.no_member = new_no_member
-            new_member.status_aktif = True  # Atur status_aktif ke True
+            new_member.status_aktif = True
             new_member.save()
-            
+            # Simpan traksaksi
             new_no_transaksi = generate_no_transaksi()
             new_transaksi = transaksi_form.save(commit=False)
             new_transaksi.member_id = new_member
@@ -251,7 +267,14 @@ def regNewmember(request):
             new_transaksi.tgl_transaksi = formatted_time
             new_transaksi.jenis_kunjungan = 1
             new_transaksi.save()
-            
+            # Simpan Billing
+            new_no_billing = generate_no_billing()
+            new_billing = billing_form.save(commit=False)
+            new_billing.kunjungan_id = new_transaksi
+            new_billing.no_billing = new_no_billing
+            new_billing.total_billing = 0
+            new_billing.tgl_transaksi = formatted_time
+            new_billing.save()
             return redirect('reg_new_member')
         
     else:
@@ -312,6 +335,7 @@ def regOldmember(request):
     conn, cursor = dbconnection()
     if request.method == 'POST':
         transaksi_form = TransaksiKunjunganForm(request.POST)
+        billing_form = BillingKasirForm(request.POST)
         if transaksi_form.is_valid():
             local_time = timezone.localtime(timezone.now()) + timedelta(hours=7)
             formatted_time = local_time.strftime('%Y-%m-%d %H:%M:%S')
@@ -321,6 +345,14 @@ def regOldmember(request):
             new_transaksi.tgl_transaksi = formatted_time
             new_transaksi.jenis_kunjungan = 2
             transaksi_form.save()
+            # Simpan Billing
+            new_no_billing = generate_no_billing()
+            new_billing = billing_form.save(commit=False)
+            new_billing.kunjungan_id = new_transaksi
+            new_billing.no_billing = new_no_billing
+            new_billing.total_billing = 0
+            new_billing.tgl_transaksi = formatted_time
+            new_billing.save()
             return redirect('reg_old_member')
     else:
         transaksi_form = TransaksiKunjunganForm()
@@ -371,3 +403,53 @@ def deleteTransaksi(request, id):
     list_transaksi.is_deleted = True
     list_transaksi.save()
     return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+
+def listPengunjung(request):
+    conn, cursor = dbconnection()
+
+    search_query = request.GET.get('q', '')
+    source_query = request.GET.get('source', '')
+    filter_query = ""
+
+    if search_query:
+        filter_query += f" AND b.nama ILIKE '%%{search_query}%%'"
+    if source_query:
+        filter_query += f" AND a.no_transaksi ILIKE '%%{search_query}%%'"
+
+    query = f"""
+        SELECT a.id, a.no_transaksi, a.tgl_transaksi, b.nama, 
+        CASE 
+            WHEN a.jenis_kunjungan = 1 THEN 'Kunjungan Baru'
+            WHEN a.jenis_kunjungan = 2 THEN 'Kunjungan Lama'
+        END AS jenis_kunjungan,
+        CASE 
+            WHEN a.jenis_transaksi = 1 THEN 'Peminjaman'
+            WHEN a.jenis_transaksi = 2 THEN 'Pembelian'
+            WHEN a.jenis_transaksi = 3 THEN 'Kunjungan'
+        END AS jenis_transaksi,
+		c.total_billing
+        FROM transaksi_kunjungan a
+        LEFT JOIN master_member b ON b.id = a.member_id
+		LEFT JOIN billing_kasir c ON c.kunjungan_id = a.id
+		LEFT JOIN billing_kasir_detail d ON d.billing_id = c.id
+        WHERE a.is_deleted = 'false' AND DATE(a.tgl_transaksi) = current_date
+        {filter_query} order by a.id desc
+    """
+    cursor.execute(query)
+    list_pengunjung = cursor.fetchall()
+
+    cursor.close()
+    conn.close()
+
+    paginator = Paginator(list_pengunjung, 10)  # 10 data per halaman
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    template = 'peminjaman_buku.html'
+    context = {
+        'list_buku': list_pengunjung,
+        'page_obj': page_obj,
+        'search_query': search_query,
+        'source_query': source_query,
+    }
+    return render(request, template, context)

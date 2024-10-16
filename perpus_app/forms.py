@@ -19,4 +19,9 @@ class TransaksiKunjunganForm(forms.ModelForm):
 class MasterMemberForm(forms.ModelForm):
     class Meta:
         model = MasterMember
-        fields = ['no_member', 'jenis_identitas', 'no_identitas', 'nama', 'alamat_ktp', 'domisili']    
+        fields = ['no_member', 'jenis_identitas', 'no_identitas', 'nama', 'alamat_ktp', 'domisili']
+        
+class BillingKasirForm(forms.ModelForm):
+    class Meta:
+        model = BillingKasir
+        fields = ['kunjungan_id', 'no_billing', 'total_billing']
