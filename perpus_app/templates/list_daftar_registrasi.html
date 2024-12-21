@@ -1,18 +1,18 @@
 <div class="col-md-6">
-            <form class="d-flex" method="get" action="">
-                <input class="form-control me-2" type="search" placeholder="Cari Nama Member" name="q" value="{{ search_query }}">
-                <button class="btn btn-success" type="submit">Cari</button>
-            </form>
-            <table class="table table-striped table-hover">
-                <thead>
-                    <tr>
-                        <th scope="col">No.</th>
-                        <th scope="col">No Register</th>
-                        <th scope="col">Nama</th>
-                        <th scope="col">Jenis Kunjungan</th>
-                        <th scope="col">Tujuan Kunjungan</th>
-                    </tr>
-                </thead>
+    <form class="d-flex" method="get" action="">
+        <input class="form-control me-2" type="search" placeholder="Cari Nama Member" name="q" value="{{ search_query }}">
+            <button class="btn btn-success" type="submit">Cari</button>
+    </form>
+        <table class="table table-striped table-hover">
+            <thead>
+                <tr>
+                    <th scope="col">No.</th>
+                    <th scope="col">No Register</th>
+                    <th scope="col">Nama</th>
+                    <th scope="col">Jenis Kunjungan</th>
+                    <th scope="col">Tujuan Kunjungan</th>
+                </tr>
+            </thead>
                 <tbody>
                     {% for transaksi in page_obj %}
                         <tr>
@@ -26,7 +26,7 @@
                                     {% csrf_token %}
                                     <button type="submit" onclick="return confirmDelete(event)" class="btn btn-danger btn-sm">Batal</button>
                                 </form>
-                              </td>
+                            </td>
                         </tr>
                     {% endfor %}
                 </tbody>
@@ -64,5 +64,5 @@
                     {% endif %}
                 </ul>
             </nav>
-        </div>
+</div>
         

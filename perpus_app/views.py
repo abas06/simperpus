@@ -239,7 +239,7 @@ def generate_no_billing():
     last_no_billing = last_billing.no_billing
     last_sequence = int(last_no_billing[8:])
     new_sequence = last_sequence + 1 
-    new_no_billing = f'BIL{today}{new_sequence:04d}' 
+    new_no_billing = f'{today}{new_sequence:04d}' 
     return new_no_billing
 
 # Reg new member
@@ -417,7 +417,7 @@ def listPengunjung(request):
         filter_query += f" AND a.no_transaksi ILIKE '%%{search_query}%%'"
 
     query = f"""
-        SELECT a.id, a.no_transaksi, a.tgl_transaksi, b.nama, 
+        SELECT c.id, a.no_transaksi, a.tgl_transaksi, b.nama, 
         CASE 
             WHEN a.jenis_kunjungan = 1 THEN 'Kunjungan Baru'
             WHEN a.jenis_kunjungan = 2 THEN 'Kunjungan Lama'
@@ -436,7 +436,7 @@ def listPengunjung(request):
         {filter_query} order by a.id desc
     """
     cursor.execute(query)
-    list_pengunjung = cursor.fetchall()
+    list_pengunjung = cursor.fetchall() 
 
     cursor.close()
     conn.close()
@@ -453,3 +453,26 @@ def listPengunjung(request):
         'source_query': source_query,
     }
     return render(request, template, context)
+
+def tambahtransaksiBuku(request, id):
+    list_buku = MasterBuku.objects.filter(is_deleted=False).values_list('id', 'nama_buku')
+    buku_form = BillingKasirDetailForm()  # Initialize an empty form for GET requests
+
+    if request.method == 'POST':
+        buku_form = BillingKasirDetailForm(request.POST)
+        if buku_form.is_valid():
+            buku_instance = buku_form.save(commit=False)  # Create instance but don't save
+            buku_instance.billing_id = id  # Assign the billing_id manually
+            buku_instance.save()  # Save the instance to the database
+            return redirect('tambah_transaksi_buku', id=id)  # Redirect after successful save
+        else:
+            print(buku_form.errors)  # Debugging: Print form errors if any
+
+    template = 'input_transaksi.html'
+    context = {
+        'list_buku': list_buku,
+        'buku_form': buku_form,
+    }
+    return render(request, template, context)
+
+        

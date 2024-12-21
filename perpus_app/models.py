@@ -186,13 +186,13 @@ class BillingKasir(models.Model):
         managed = False
         db_table = 'billing_kasir'
 
-
 class BillingKasirDetail(models.Model):
     id = models.BigAutoField(primary_key=True)
     billing_id = models.IntegerField(models.DO_NOTHING, blank=True, null=True)
     buku_id = models.IntegerField(blank=True, null=True)
     jenis_transaksi = models.IntegerField(blank=True, null=True)
     is_deleted = models.BooleanField(default=False, blank=True, null=True)
+    qty = models.IntegerField(blank=True, null=True)
 
     class Meta:
         managed = False

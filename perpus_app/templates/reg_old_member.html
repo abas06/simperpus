@@ -76,41 +76,8 @@
     {% include 'footer.html' %}
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        $(document).ready(function() {
-            $("#member_name").autocomplete({
-                source: function(request, response) {
-                    $.ajax({
-                        url: "{% url 'autocomplete-members' %}",
-                        dataType: "json",
-                        data: {
-                            term: request.term
-                        },
-                        success: function(data) {
-                            response($.map(data, function(item) {
-                                return {
-                                    label: item.nama + " - " + item.no_member,
-                                    value: item.nama + " - " + item.no_member,
-                                    id: item.id,
-                                    no_identitas: item.no_identitas,
-                                    alamat_ktp: item.alamat_ktp,
-                                    domisili: item.domisili
-                                };
-                            }));
-                        },
-                        error: function(xhr, status, error) {   
-                        }
-                    });
-                },
-                minLength: 2,
-                select: function(event, ui) {
-                    $("#member_id").val(ui.item.id);
-                    $("#no_identitas").val(ui.item.no_identitas);
-                    $("#alamat_ktp").val(ui.item.alamat_ktp);
-                    $("#domisili").val(ui.item.domisili);
-                }
-            });
-        });
+        const autocompleteUrl = "{% url 'autocomplete-members' %}";
     </script>
-    <script src="{% static 'js/functions.js' %}"></script>
+    <script src="{% static 'js/auto_comp.js' %}"></script>
   </body>
 </html>

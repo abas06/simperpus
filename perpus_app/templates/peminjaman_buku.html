@@ -34,7 +34,8 @@
                             <th scope="col">Jenis Kunjungan</th>
                             <th scope="col">Tujuan Kunjungan</th>
                             <th scope="col">Total Billing</th>
-                            <th scope="col">Action</th>
+                            <th scope="col">Tambah Buku</th>
+                            <th scope="col">Batal Kunjungan</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -47,6 +48,9 @@
                                 <td>{{ transaksi.4 }}</td>
                                 <td>{{ transaksi.5 }}</td>
                                 <td>{{ transaksi.6 }}</td>
+                                <td>
+                                    <a href="{% url 'tambah_transaksi_buku' transaksi.0 %}" class="btn btn-warning btn-sm">Tambah</a>
+                                </td>
                                 <td>
                                     <form action="{% url 'delete_transaksi' transaksi.0 %}" method="post">
                                         {% csrf_token %}
