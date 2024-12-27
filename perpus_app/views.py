@@ -417,7 +417,7 @@ def listPengunjung(request):
         filter_query += f" AND a.no_transaksi ILIKE '%%{search_query}%%'"
 
     query = f"""
-        SELECT c.id, a.no_transaksi, a.tgl_transaksi, b.nama, 
+        select distinct * from (SELECT c.id, a.no_transaksi, a.tgl_transaksi, b.nama, 
         CASE 
             WHEN a.jenis_kunjungan = 1 THEN 'Kunjungan Baru'
             WHEN a.jenis_kunjungan = 2 THEN 'Kunjungan Lama'
@@ -433,7 +433,7 @@ def listPengunjung(request):
 		LEFT JOIN billing_kasir c ON c.kunjungan_id = a.id
 		LEFT JOIN billing_kasir_detail d ON d.billing_id = c.id
         WHERE a.is_deleted = 'false' AND DATE(a.tgl_transaksi) = current_date
-        {filter_query} order by a.id desc
+        {filter_query} order by a.id desc) as wasd
     """
     cursor.execute(query)
     list_pengunjung = cursor.fetchall() 
@@ -455,18 +455,18 @@ def listPengunjung(request):
     return render(request, template, context)
 
 def tambahtransaksiBuku(request, id):
-    list_buku = MasterBuku.objects.filter(is_deleted=False).values_list('id', 'nama_buku')
-    buku_form = BillingKasirDetailForm()  # Initialize an empty form for GET requests
+    list_buku = MasterBuku.objects.filter(is_deleted=False).values_list('id', 'nama_buku', 'harga_jual', 'harga_sewa')
+    buku_form = BillingKasirDetailForm()
 
     if request.method == 'POST':
         buku_form = BillingKasirDetailForm(request.POST)
         if buku_form.is_valid():
-            buku_instance = buku_form.save(commit=False)  # Create instance but don't save
-            buku_instance.billing_id = id  # Assign the billing_id manually
-            buku_instance.save()  # Save the instance to the database
-            return redirect('tambah_transaksi_buku', id=id)  # Redirect after successful save
+            buku_instance = buku_form.save(commit=False)
+            buku_instance.billing_id = id
+            buku_instance.save()
+            return redirect('tambah_transaksi_buku', id=id)
         else:
-            print(buku_form.errors)  # Debugging: Print form errors if any
+            print(buku_form.errors)
 
     template = 'input_transaksi.html'
     context = {

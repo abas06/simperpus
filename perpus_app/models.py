@@ -193,6 +193,8 @@ class BillingKasirDetail(models.Model):
     jenis_transaksi = models.IntegerField(blank=True, null=True)
     is_deleted = models.BooleanField(default=False, blank=True, null=True)
     qty = models.IntegerField(blank=True, null=True)
+    hari_peminjaman = models.IntegerField(blank=True, null=True)
+    harga = models.FloatField(blank=True, null=True)
 
     class Meta:
         managed = False

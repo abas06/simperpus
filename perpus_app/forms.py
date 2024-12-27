@@ -29,4 +29,4 @@ class BillingKasirForm(forms.ModelForm):
 class BillingKasirDetailForm(forms.ModelForm):
     class Meta:
         model = BillingKasirDetail
-        fields = ['buku_id', 'jenis_transaksi', 'qty']
+        fields = ['buku_id', 'jenis_transaksi', 'qty', 'hari_peminjaman', 'harga']
