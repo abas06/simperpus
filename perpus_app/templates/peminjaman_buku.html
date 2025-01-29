@@ -42,17 +42,17 @@
                         {% for transaksi in page_obj %}
                             <tr>
                                 <td>{{ forloop.counter }}</td>
-                                <td>{{ transaksi.1 }}</td>
                                 <td>{{ transaksi.2 }}</td>
                                 <td>{{ transaksi.3 }}</td>
                                 <td>{{ transaksi.4 }}</td>
                                 <td>{{ transaksi.5 }}</td>
                                 <td>{{ transaksi.6 }}</td>
+                                <td class="harga">{{ transaksi.7 }}</td>
                                 <td>
                                     <a href="{% url 'tambah_transaksi_buku' transaksi.0 %}" class="btn btn-warning btn-sm">Tambah</a>
                                 </td>
                                 <td>
-                                    <form action="{% url 'delete_transaksi' transaksi.0 %}" method="post">
+                                    <form action="{% url 'delete_transaksi' transaksi.1 %}" method="post">
                                         {% csrf_token %}
                                         <button type="submit" onclick="return confirmDelete(event)" class="btn btn-danger btn-sm">Batal</button>
                                     </form>

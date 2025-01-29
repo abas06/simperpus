@@ -7,10 +7,11 @@
             <thead>
                 <tr>
                     <th scope="col">No.</th>
-                    <th scope="col">No Register</th>
-                    <th scope="col">Nama</th>
-                    <th scope="col">Jenis Kunjungan</th>
-                    <th scope="col">Tujuan Kunjungan</th>
+                    <th scope="col">Nama Buku</th>
+                    <th scope="col">Jenis Transaksi</th>
+                    <th scope="col">Hari Peminjaman</th>
+                    <th scope="col">Biaya</th>
+                    <th scope="col">Action</th>
                 </tr>
             </thead>
                 <tbody>
@@ -20,11 +21,11 @@
                             <td>{{ transaksi.1 }}</td>
                             <td>{{ transaksi.2 }}</td>
                             <td>{{ transaksi.3 }}</td>
-                            <td>{{ transaksi.4 }}</td>
+                            <td class="harga">{{ transaksi.4 }}</td>
                             <td>
-                                <form action="{% url 'delete_transaksi' transaksi.0 %}" method="post">
+                                <form action="{% url 'delete_transaksi_buku' transaksi.5 %}" method="post">
                                     {% csrf_token %}
-                                    <button type="submit" onclick="return confirmDelete(event)" class="btn btn-danger btn-sm">Batal</button>
+                                    <button type="submit" onclick="return confirmDelete(event)" class="btn btn-danger btn-sm">Hapus</button>
                                 </form>
                             </td>
                         </tr>

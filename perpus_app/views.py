@@ -417,7 +417,12 @@ def listPengunjung(request):
         filter_query += f" AND a.no_transaksi ILIKE '%%{search_query}%%'"
 
     query = f"""
-        select distinct * from (SELECT c.id, a.no_transaksi, a.tgl_transaksi, b.nama, 
+        SELECT DISTINCT 
+        c.id, 
+        a.id,
+        a.no_transaksi, 
+        a.tgl_transaksi, 
+        b.nama, 
         CASE 
             WHEN a.jenis_kunjungan = 1 THEN 'Kunjungan Baru'
             WHEN a.jenis_kunjungan = 2 THEN 'Kunjungan Lama'
@@ -427,13 +432,15 @@ def listPengunjung(request):
             WHEN a.jenis_transaksi = 2 THEN 'Pembelian'
             WHEN a.jenis_transaksi = 3 THEN 'Kunjungan'
         END AS jenis_transaksi,
-		c.total_billing
+        COALESCE(SUM(CASE WHEN d.is_deleted = 'false' THEN d.harga ELSE 0 END), 0) AS harga
         FROM transaksi_kunjungan a
         LEFT JOIN master_member b ON b.id = a.member_id
-		LEFT JOIN billing_kasir c ON c.kunjungan_id = a.id
-		LEFT JOIN billing_kasir_detail d ON d.billing_id = c.id
-        WHERE a.is_deleted = 'false' AND DATE(a.tgl_transaksi) = current_date
-        {filter_query} order by a.id desc) as wasd
+        LEFT JOIN billing_kasir c ON c.kunjungan_id = a.id
+        LEFT JOIN billing_kasir_detail d ON d.billing_id = c.id
+        WHERE a.is_deleted = 'false' 
+        AND DATE(a.tgl_transaksi) = CURRENT_DATE
+        GROUP BY c.id, a.id, a.no_transaksi, a.tgl_transaksi, b.nama, a.jenis_kunjungan, a.jenis_transaksi
+        ORDER BY a.id DESC;
     """
     cursor.execute(query)
     list_pengunjung = cursor.fetchall() 
@@ -468,11 +475,40 @@ def tambahtransaksiBuku(request, id):
         else:
             print(buku_form.errors)
 
+    conn, cursor = dbconnection()
+    try:
+        query = """
+        SELECT a.billing_id, b.nama_buku, 
+            CASE
+                WHEN jenis_transaksi = 1 THEN 'Pinjam'
+                WHEN jenis_transaksi = 2 THEN 'Beli'
+            END AS jenis_transaksi, a.hari_peminjaman, a.harga, a.id
+        FROM billing_kasir_detail a
+        LEFT JOIN master_buku b ON b.id = a.buku_id
+        WHERE a.is_deleted = 'false' AND a.billing_id = 34
+        order by a.id desc
+        """
+        cursor.execute(query, [id])
+        list_transaksi_buku = cursor.fetchall()
+        
+        paginator = Paginator(list_transaksi_buku, 7)
+        page_number = request.GET.get('page', 1)
+        page_obj = paginator.get_page(page_number)
+
+    finally:
+        cursor.close()
+        conn.close()
+
     template = 'input_transaksi.html'
     context = {
         'list_buku': list_buku,
         'buku_form': buku_form,
+        'page_obj': page_obj,
     }
     return render(request, template, context)
 
-        
+def deletetransaksiBuku(request, id):
+    list_transaksi = get_object_or_404(BillingKasirDetail, id=id)
+    list_transaksi.is_deleted = True
+    list_transaksi.save()
+    return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
